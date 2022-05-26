@@ -15,10 +15,10 @@ public with sharing class MaintenanceRequestTriggerHelper {
                     newCase.Origin = 'Web';
                     newCase.Date_Reported__c = Date.today();
                     newCase.Vehicle__c = c.Vehicle__c;
-                    newCase.Equipment__c = c.Equipment__c;
+                    //newCase.Equipment__c = c.Equipment__c;
                     if (idCycleDaysMap.get(c.Id) != null)
-                        newCase.Date_Due__c = Date.today + idCycleDaysMap.get(c.Id);
-                    else newCase.Date_Due__c = Date.today;
+                        newCase.Date_Due__c = Date.today() + idCycleDaysMap.get(c.Id);
+                    else newCase.Date_Due__c = Date.today();
                 newCases.add(newCase);                }
             }
         }
@@ -28,10 +28,17 @@ public with sharing class MaintenanceRequestTriggerHelper {
     public static Map<String,Integer> getCycleDays(List<Case> requests){
         Map<String,Integer> idCycleDaysMap = new Map<String,Integer>();
         Map<Id, Case> caseKeys = new Map<Id,Case> (requests);
-
+        List<AggregateResult> fck = [SELECT Maintenance_Request__r.Id cId, MIN(Equipment__r.Maintenance_Cycle__c) cycle
+                                    FROM Equipment_Maintenance_Item__c WHERE Maintenance_Request__r.Id in :caseKeys.keySet()
+                                    GROUP BY Maintenance_Request__r.Id];
+        for(AggregateResult res:fck){
+            Integer addDays = 0;
+            if (res.get('cycle') != null)
+                addDays += Integer.valueOf(res.get('cycle'));
+                idCycleDaysMap.put((String)res.get('cId'),addDays);
+        }
+        return idCycleDaysMap;
         
     }   
-
- 
 
 }
