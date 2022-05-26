@@ -5,7 +5,6 @@ public with sharing class MaintenanceRequestTriggerHelper {
     public static void nextRoutineMaintenance(List<Case> requests){
         List<Case> newCases = new List<Case>();
         Map<String,Integer> caseIdToCycleDays = getCycleDays(requests);
-        //List<Equipment_Maintenance_Item__c> caseIdToEquipmentMaintenanceItem = new List<Equipment_Maintenance_Item__c>();
 
         for(Case c:requests){
             if (c.Status =='Closed'){
@@ -21,17 +20,11 @@ public with sharing class MaintenanceRequestTriggerHelper {
                     if (caseIdToCycleDays.get(c.Id) != null)
                         newCase.Date_Due__c = Date.today() + caseIdToCycleDays.get(c.Id);
                     else newCase.Date_Due__c = Date.today();
-
-                    //if (caseIdToEquipmentMaintenanceItem.get(c.Id) != null ){
-                    //    Equipment_Maintenance_Item__c newEquipmentMaintenanceItem = caseIdToEquipmentMaintenanceItem.get(c.Id);
-                    //}
-
-                newCases.add(newCase);
-                //junction.add(newEquipmentMaintenanceItem);                
+                    
+                newCases.add(newCase);               
                 }
             }
         }
-
         insert(newCases);
 
     }
