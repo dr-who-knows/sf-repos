@@ -4,7 +4,8 @@ public with sharing class MaintenanceRequestTriggerHelper {
 
     public static void nextRoutineMaintenance(List<Case> requests){
         List<Case> newCases = new List<Case>();
-        Map<String,Integer> idCycleDaysMap = getCycleDays(requests);
+        Map<String,Integer> caseIdToCycleDays = getCycleDays(requests);
+        //List<Equipment_Maintenance_Item__c> caseIdToEquipmentMaintenanceItem = new List<Equipment_Maintenance_Item__c>();
 
         for(Case c:requests){
             if (c.Status =='Closed'){
@@ -15,18 +16,28 @@ public with sharing class MaintenanceRequestTriggerHelper {
                     newCase.Origin = 'Web';
                     newCase.Date_Reported__c = Date.today();
                     newCase.Vehicle__c = c.Vehicle__c;
-                    //newCase.Equipment__c = c.Equipment__c;
-                    if (idCycleDaysMap.get(c.Id) != null)
-                        newCase.Date_Due__c = Date.today() + idCycleDaysMap.get(c.Id);
+                    newCase.Product__c = c.product__c;
+
+                    if (caseIdToCycleDays.get(c.Id) != null)
+                        newCase.Date_Due__c = Date.today() + caseIdToCycleDays.get(c.Id);
                     else newCase.Date_Due__c = Date.today();
-                newCases.add(newCase);                }
+
+                    //if (caseIdToEquipmentMaintenanceItem.get(c.Id) != null ){
+                    //    Equipment_Maintenance_Item__c newEquipmentMaintenanceItem = caseIdToEquipmentMaintenanceItem.get(c.Id);
+                    //}
+
+                newCases.add(newCase);
+                //junction.add(newEquipmentMaintenanceItem);                
+                }
             }
         }
+
         insert(newCases);
+
     }
 
     public static Map<String,Integer> getCycleDays(List<Case> requests){
-        Map<String,Integer> idCycleDaysMap = new Map<String,Integer>();
+        Map<String,Integer> caseIdToCycleDays = new Map<String,Integer>();
         Map<Id, Case> caseKeys = new Map<Id,Case> (requests);
         List<AggregateResult> fck = [SELECT Maintenance_Request__r.Id cId, MIN(Equipment__r.Maintenance_Cycle__c) cycle
                                     FROM Equipment_Maintenance_Item__c WHERE Maintenance_Request__r.Id in :caseKeys.keySet()
@@ -35,9 +46,9 @@ public with sharing class MaintenanceRequestTriggerHelper {
             Integer addDays = 0;
             if (res.get('cycle') != null)
                 addDays += Integer.valueOf(res.get('cycle'));
-                idCycleDaysMap.put((String)res.get('cId'),addDays);
+                caseIdToCycleDays.put((String)res.get('cId'),addDays);
         }
-        return idCycleDaysMap;
+        return caseIdToCycleDays;
         
     }   
 
