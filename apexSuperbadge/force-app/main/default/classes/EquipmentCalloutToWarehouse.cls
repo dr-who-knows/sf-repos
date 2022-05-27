@@ -15,14 +15,14 @@ public class EquipmentCalloutToWarehouse {
                 Map<String, Object> productMap = (Map<String,Object>) p;
                 Product2 pr = new Product2();
 
-                pr.Reaplacemant_Part__c = (boolean) productMap.get('replacement');
+                pr.Replacement_Part__c = (boolean) productMap.get('replacement');
                 pr.Cost__c = (Integer) productMap.get('cost');
                 pr.Current_INventory__c = (Integer) productMap.get('quantity');
                 pr.Lifespan_Months__c = (Integer) productMap.get('lifespan');
                 pr.Maintenance_Cycle__c = (Integer) productMap.get('maintenanceperiod');
-                pr.Warehouse_SKU__c = (String) roductMap.get('sku');
+                pr.Warehouse_SKU__c = (String) productMap.get('sku');
                 pr.ProductCode = (String) productMap.get('_id');
-                pr.Name = (String) roductMap.get('name');
+                pr.Name = (String) productMap.get('name');
 
                 internalProducts.add(pr);
             }
