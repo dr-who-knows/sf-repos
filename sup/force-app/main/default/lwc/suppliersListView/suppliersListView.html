@@ -1,14 +1,14 @@
 <template>
-
+    <lightning-card  title="Suppliers">
     <div class="slds-box slds-theme_default">
-    <table class = "slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
-        <thead>
+    <table class = "slds-table slds-table_cell-buffer slds-table_bordered ">
+        <!--<thead>
             <tr class="slds-line-height_reset">
                 <th class="" scope="col">
-                    Supplier Name
+                    Suppliers
                 </th>
             </tr>
-        </thead>
+        </thead>-->
         <tbody>
             <template iterator:it={records}>
                 <tr class="slds-hint-parent" key = {it.value.id}>
@@ -25,4 +25,5 @@
         </tbody>
     </table>
     </div>
+</lightning-card>
 </template>
